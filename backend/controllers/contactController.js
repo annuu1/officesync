@@ -9,12 +9,22 @@ const uploadContacts = async (req, res) => {
     const contacts = await parseCSV(req.file.path);
     console.log(`Parsed ${contacts.length} contacts from CSV`);
 
-    // Insert contacts, skipping duplicates
-    const result = await Contact.insertMany(contacts, { ordered: false });
-    fs.unlinkSync(req.file.path); // Clean up
+    // Check for existing phone numbers
+    const phoneNumbers = contacts.map(c => c.phone_number);
+    const existingContacts = await Contact.find({ phone_number: { $in: phoneNumbers } });
+    const existingPhoneNumbers = new Set(existingContacts.map(c => c.phone_number));
 
-    const insertedCount = result.length;
-    const skippedCount = contacts.length - insertedCount;
+    // Filter out duplicates
+    const newContacts = contacts.filter(c => !existingPhoneNumbers.has(c.phone_number));
+    const skippedCount = contacts.length - newContacts.length;
+
+    let insertedCount = 0;
+    if (newContacts.length > 0) {
+      const result = await Contact.insertMany(newContacts, { ordered: false });
+      insertedCount = result.length;
+    }
+
+    fs.unlinkSync(req.file.path); // Clean up
 
     res.status(200).json({
       message: 'Contacts processed successfully',
@@ -23,21 +33,8 @@ const uploadContacts = async (req, res) => {
     });
   } catch (err) {
     console.error('Error in uploadContacts:', err);
-    if (err.name === 'MongoServerError' && err.code === 11000) {
-      // Handle duplicate key error
-      const existingContacts = await Contact.find({ phone_number: { $in: contacts.map(c => c.phone_number) } });
-      const insertedCount = contacts.length - existingContacts.length;
-      const skippedCount = existingContacts.length;
-      fs.unlinkSync(req.file.path); // Ensure cleanup even on error
-      res.status(200).json({
-        message: 'Contacts processed with some duplicates skipped',
-        inserted: insertedCount,
-        skipped: skippedCount,
-      });
-    } else {
-      fs.unlinkSync(req.file.path); // Clean up on other errors
-      res.status(500).json({ error: err.message || 'Failed to process upload' });
-    }
+    fs.unlinkSync(req.file.path); // Clean up
+    res.status(500).json({ error: err.message || 'Failed to process upload' });
   }
 };
 
