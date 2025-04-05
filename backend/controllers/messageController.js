@@ -5,7 +5,7 @@ const createMessage = async (req, res) => {
   if (!contact_id || !template_id) return res.status(400).json({ error: 'Contact ID and Template ID are required' });
 
   try {
-    const message = new Message({ contact_id, template_id });
+    const message = new Message({ contact_id, template_id, mobile_id: 'unknown' }); // Default mobile_id
     await message.save();
     res.status(201).json(message);
   } catch (err) {
@@ -36,11 +36,11 @@ const getPendingMessages = async (req, res) => {
 };
 
 const updateMessageStatus = async (req, res) => {
-  const { status } = req.body;
+  const { status, mobile_id } = req.body;
   try {
     const message = await Message.findByIdAndUpdate(
       req.params.id,
-      { status, datetime: new Date() },
+      { status, mobile_id, datetime: new Date() },
       { new: true }
     ).populate('contact_id', 'phone_number').populate('template_id', 'content');
     if (!message) return res.status(404).json({ error: 'Message not found' });
