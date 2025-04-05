@@ -1,27 +1,31 @@
 import React, { useState } from 'react';
-import { uploadFile } from '../api';
+import { uploadContacts } from '../api';
 
 const FileUpload = ({ onUpload }) => {
   const [file, setFile] = useState(null);
-  const [message, setMessage] = useState('');
+  const [result, setResult] = useState({ message: '', inserted: 0, skipped: 0 });
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
-    setMessage('');
+    setResult({ message: '', inserted: 0, skipped: 0 });
   };
 
   const handleUpload = async () => {
     if (!file) {
-      setMessage('Please select a file');
+      setResult({ message: 'Please select a file', inserted: 0, skipped: 0 });
       return;
     }
     try {
-      const res = await uploadFile(file);
-      setMessage(res.data.message);
+      const res = await uploadContacts(file);
+      setResult({
+        message: res.data.message,
+        inserted: res.data.inserted,
+        skipped: res.data.skipped,
+      });
       setFile(null);
-      onUpload(); // Trigger refresh of message list
+      onUpload();
     } catch (err) {
-      setMessage(err.response?.data?.error || 'Upload failed');
+      setResult({ message: err.response?.data?.error || 'Upload failed', inserted: 0, skipped: 0 });
     }
   };
 
@@ -29,7 +33,11 @@ const FileUpload = ({ onUpload }) => {
     <div>
       <input type="file" accept=".csv" onChange={handleFileChange} />
       <button onClick={handleUpload}>Upload CSV</button>
-      {message && <p>{message}</p>}
+      {result.message && (
+        <p>
+          {result.message} (Inserted: {result.inserted}, Skipped: {result.skipped})
+        </p>
+      )}
     </div>
   );
 };

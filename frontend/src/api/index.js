@@ -1,12 +1,10 @@
 import axios from 'axios';
 import { API_URL } from '../constants';
 
-export const uploadFile = async (file) => {
+export const uploadContacts = (file) => {
   const formData = new FormData();
   formData.append('file', file);
-  return axios.post(`${API_URL}/upload`, formData);
+  return axios.post(`${API_URL}/contacts/upload`, formData);
 };
 
-export const fetchMessages = async () => {
-  return axios.get(`${API_URL}/messages`);
-};
+export const fetchContacts = () => axios.get(`${API_URL}/contacts`);  

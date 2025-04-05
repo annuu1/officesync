@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import FileUpload from '../components/FileUpload';
-import MessageTable from '../components/MessageTable';
-import { fetchMessages } from '../api';
+import ContactsTable from '../components/ContactsTable';
+import { fetchContacts } from '../api'; // Only import what we need
 
 const Home = () => {
   const [messages, setMessages] = useState([]);
 
   const loadMessages = async () => {
     try {
-      const res = await fetchMessages();
+      const res = await fetchContacts();
       setMessages(res.data);
     } catch (err) {
-      console.error('Failed to fetch messages:', err);
+      console.error('Failed to fetch contacts:', err);
     }
   };
 
@@ -23,8 +23,8 @@ const Home = () => {
     <div style={{ padding: '20px' }}>
       <h1>SMS Management Dashboard</h1>
       <FileUpload onUpload={loadMessages} />
-      <h2>Messages</h2>
-      <MessageTable messages={messages} />
+      <h2>Contacts</h2> {/* Updated heading to reflect data */}
+      <ContactsTable messages={messages} />
     </div>
   );
 };
