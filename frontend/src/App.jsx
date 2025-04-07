@@ -1,16 +1,21 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Home from './pages/Home';
-import './index.css';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Sidebar from './components/Sidebar';
+import DashboardLayout from './components/DashboardLayout';
 
-const App = () => {
+function App() {
   return (
-    <BrowserRouter>
-    <Routes>
-      <Route path="/" element={<Home />} />
-    </Routes>
-    </BrowserRouter>
+    <Router>
+      <div className="flex">
+        <Sidebar />
+        <div className="flex-1 p-6 bg-gray-100 min-h-screen">
+          <Routes>
+            <Route path="/stats" element={<DashboardLayout />} />
+            <Route path="/" element={<div className="text-2xl">Welcome to SMS Dashboard</div>} />
+          </Routes>
+        </div>
+      </div>
+    </Router>
   );
-};
+}
 
 export default App;
