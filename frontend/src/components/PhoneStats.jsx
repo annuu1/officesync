@@ -6,7 +6,7 @@ function PhoneStats({ dateRange }) {
   const [selectedPhone, setSelectedPhone] = useState(0);
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/stats/phones', {
+    axios.get('http://localhost:5000/api/messages/mobile-stats', {
       params: dateRange,
     }).then((res) => setPhoneStats(res.data));
   }, [dateRange]);

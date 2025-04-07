@@ -8,7 +8,7 @@ function MessageTable({ dateRange }) {
   useEffect(() => {
     axios.get('http://localhost:5000/api/messages', {
       params: { ...dateRange, mobileId: mobileId || undefined },
-    }).then((res) => setMessages(res.data));
+    }).then((res) => setMessages(res.data.messages));
   }, [dateRange, mobileId]);
 
   return (

@@ -9,7 +9,7 @@ function StatsOverview({ dateRange }) {
   const [stats, setStats] = useState({ totalSent: 0, totalFailed: 0, totalPending: 0 });
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/stats/aggregate', {
+    axios.get('http://localhost:5000/api/messages/stats', {
       params: dateRange,
     }).then((res) => setStats(res.data));
   }, [dateRange]);
