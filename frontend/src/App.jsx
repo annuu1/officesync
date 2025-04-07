@@ -5,14 +5,14 @@ import DashboardLayout from './components/DashboardLayout';
 function App() {
   return (
     <Router>
-      <div className="flex">
+      <div className="flex min-h-screen">
         <Sidebar />
-        <div className="flex-1 p-6 bg-gray-100 min-h-screen">
+        <main className="flex-1 ml-64 p-6 bg-gray-100">
           <Routes>
             <Route path="/stats" element={<DashboardLayout />} />
             <Route path="/" element={<div className="text-2xl">Welcome to SMS Dashboard</div>} />
           </Routes>
-        </div>
+        </main>
       </div>
     </Router>
   );
