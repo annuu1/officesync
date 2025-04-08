@@ -6,7 +6,7 @@ import MessageTable from './MessageTable';
 function DashboardLayout() {
   const [dateRange, setDateRange] = useState({
     startDate: new Date().toISOString().split('T')[0],
-    endDate: new Date().toISOString().split('T')[0],
+    endDate: new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split('T')[0],
   });
 
   return (
